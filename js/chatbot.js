@@ -8,14 +8,14 @@ let userMessage = null; // Variable to store user's message
 
 // Harsha's Portfolio Knowledge Base
 const knowledgeBase = {
-    "projects": "I've built several agentic systems including the **Gemini DevOps Copilot**, **Mentara AI**, and **Code Vortex**. Which one would you like to know more about?",
+    "projects": "I've built several agentic systems including the <a href='https://github.com/grharsha777/Gemini-DevOps-Copilot' target='_blank'>Gemini DevOps Copilot</a>, <a href='https://github.com/grharsha777/MentaraAI' target='_blank'>Mentara AI</a>, and <a href='https://github.com/grharsha777/Code-Vortex' target='_blank'>Code Vortex</a>. Which one would you like to know more about?",
     "about": "I'm G R Harsha, an AI Engineer specializing in **Agentic Systems** and **DevOps Automation**. I look beyond simple chatbots to build autonomous systems that reason and act.",
-    "contact": "You can reach me at **grharsha128@gmail.com** or connect with me on LinkedIn. I'm open to internships and collaborations! Scroll down to the Contact section?",
+    "contact": "You can reach me at <a href='mailto:grharsha128@gmail.com'>grharsha128@gmail.com</a> or connect with me on <a href='https://www.linkedin.com/in/grharsha777/' target='_blank'>LinkedIn</a>. I'm open to internships and collaborations!",
     "skills": "My tech stack includes **Python, FastAPI, LangChain, AutoGen, Docker, and Kubernetes**. I focus on production-grade AI engineering.",
-    "gemini": "**Gemini DevOps Copilot** is an AI assistant that automates CI/CD configs and incident response using the Gemini API. It's designed to reduce toil for DevOps teams.",
-    "mentara": "**Mentara AI** is a mental wellness platform combining full-stack development with LLMs to provide supportive conversations.",
-    "code vortex": "**Code Vortex** is a suite of developer tools designed to automate documentation and code review processes.",
-    "experience": "I'm currently a B.Tech CSE (AI) student at NIAT & Yenepoya University. I've also been a Mentor at **GSSoC** and a Campus Ambassador.",
+    "gemini": "**Gemini DevOps Copilot** is an AI assistant that automates CI/CD configs and incident response. View it on <a href='https://github.com/grharsha777/Gemini-DevOps-Copilot' target='_blank'>GitHub</a>.",
+    "mentara": "**Mentara AI** is a mental wellness platform combining full-stack development with LLMs. Check the <a href='https://github.com/grharsha777/MentaraAI' target='_blank'>Repo</a>.",
+    "code vortex": "**Code Vortex** is a suite of developer tools for automated documentation. See more on <a href='https://github.com/grharsha777/Code-Vortex' target='_blank'>GitHub</a>.",
+    "experience": "I'm a B.Tech CSE (AI) student. I've been a Mentor at **GSSoC** and a Campus Ambassador. View my <a href='https://drive.google.com/file/d/1BnObISeyCMV9UTi9V_qIKWJitsyrycq1/view' target='_blank'>Full Résumé</a>.",
     "agentic": "My 'Agentic' approach means I build systems that use **ReAct loops** (Reasoning + Acting). My agents don't just talk; they use tools, query databases, and execute workflows.",
     "default": "I can tell you about my **projects**, **skills**, **experience**, or how to **contact** Harsha. What would you like to know?"
 };
@@ -66,7 +66,8 @@ const generateResponse = async (userMsg) => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ message: userMsg })
+            body: JSON.stringify({ message: userMsg }),
+            signal: AbortSignal.timeout(5000) // Timeout after 5s
         });
 
         if (!response.ok) {
@@ -76,9 +77,48 @@ const generateResponse = async (userMsg) => {
         const data = await response.json();
         return data.response;
     } catch (error) {
-        console.error("Error connecting to Chatbot API:", error);
-        return "I'm having trouble connecting to my brain (Backend Server). Please ensure the Python server is running at http://localhost:8000.";
+        console.warn("Backend unreachable, falling back to local Knowledge Base:", error);
+        return getFallbackResponse(userMsg);
     }
+}
+
+// Intelligent Client-Side Fallback Matcher
+const getFallbackResponse = (query) => {
+    const lowerQuery = query.toLowerCase();
+
+    // 1. Keyword Mapping
+    const keywords = {
+        "project": "projects",
+        "work": "projects",
+        "repo": "projects",
+        "about": "about",
+        "who are you": "about",
+        "identity": "about",
+        "contact": "contact",
+        "email": "contact",
+        "reach": "contact",
+        "skill": "skills",
+        "tech": "skills",
+        "stack": "skills",
+        "experience": "experience",
+        "study": "experience",
+        "education": "experience",
+        "gemini": "gemini",
+        "devops": "gemini",
+        "mentara": "mentara",
+        "vortex": "code vortex",
+        "agentic": "agentic",
+        "reasoning": "agentic"
+    };
+
+    // 2. Find Match
+    for (const [key, category] of Object.entries(keywords)) {
+        if (lowerQuery.includes(key)) {
+            return knowledgeBase[category] || knowledgeBase["default"];
+        }
+    }
+
+    return knowledgeBase["default"];
 }
 
 const handleChat = async () => {
