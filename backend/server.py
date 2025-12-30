@@ -4,6 +4,13 @@ import sys
 import os
 import requests
 
+# Load environment variables from .env file (for local dev)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not installed, use system env vars
+
 # Add the current directory to sys.path to ensure module imports work
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -38,6 +45,10 @@ IMPORTANT FORMATTING RULES:
 - For LinkedIn, format as: <a href="https://www.linkedin.com/in/grharsha777/" target="_blank">LinkedIn Profile</a>
 - For Resume, format as: <a href="https://drive.google.com/file/d/1BnObISeyCMV9UTi9V_qIKWJitsyrycq1/view" target="_blank">View Resume</a>
 - Make links clickable and professional.
+
+IMPORTANT DATA RULES:
+- If the context contains "[CRITICAL DATA]" regarding GitHub statistics, use THAT number for the total repositories. 
+- Do NOT count the projects in the "Projects" section to determine the total repository count; rely ONLY on the GitHub Statistics section for the total number.
 """
 
 @app.route("/chat", methods=["POST"])

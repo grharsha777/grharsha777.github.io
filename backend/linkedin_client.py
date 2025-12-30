@@ -5,7 +5,7 @@ class LinkedInClient:
     def __init__(self):
         self.client_id = os.getenv("LINKEDIN_CLIENT_ID", "")
         self.client_secret = os.getenv("LINKEDIN_CLIENT_SECRET", "")
-        self.access_token = os.getenv("LINKEDIN_ACCESS_TOKEN")
+        self.access_token = os.getenv("LINKEDIN_ACCESS_TOKEN", "")
         self.profile_url = "https://www.linkedin.com/in/grharsha777/"
         self.api_url = "https://api.linkedin.com/v2"
 

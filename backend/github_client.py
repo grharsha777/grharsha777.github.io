@@ -124,10 +124,13 @@ class GitHubClient:
         lang_text = ", ".join([f"{lang} ({count})" for lang, count in top_languages])
         
         text = f"""
-**GitHub Statistics for G R Harsha:**
+[CRITICAL DATA] G R Harsha has a total of **{total_count}** public repositories on GitHub.
+
+**Detailed GitHub Statistics:**
 - Total Repositories: **{total_count}**
 - Total Stars: **{total_stars}**
 - Top Languages: {lang_text}
 - Profile: <a href="https://github.com/{self.username}" target="_blank">github.com/{self.username}</a>
 """
         return text
+
