@@ -7,21 +7,25 @@ import requests
 # Load environment variables from .env file (for local dev)
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    # Explicitly find the .env file in the root directory
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
+    load_dotenv(dotenv_path=env_path)
 except ImportError:
-    pass  # dotenv not installed, use system env vars
+    pass 
 
 # Add the current directory to sys.path to ensure module imports work
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.rag_engine import PortfolioRAG
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../', static_url_path='')
 # Enable CORS for all routes
 CORS(app)
 
 # Configuration - Load from environment variables
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
+
 MISTRAL_MODEL = "mistral-tiny" 
 
 # Initialize RAG Engine
@@ -52,6 +56,11 @@ IMPORTANT DATA RULES:
 """
 
 @app.route("/", methods=["GET"])
+def index():
+    """Serve the main portfolio page."""
+    return app.send_static_file("index.html")
+
+@app.route("/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "running", "rag_initialized": rag is not None})
 
