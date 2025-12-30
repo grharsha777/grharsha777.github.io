@@ -51,6 +51,10 @@ IMPORTANT DATA RULES:
 - Do NOT count the projects in the "Projects" section to determine the total repository count; rely ONLY on the GitHub Statistics section for the total number.
 """
 
+@app.route("/", methods=["GET"])
+def health_check():
+    return jsonify({"status": "running", "rag_initialized": rag is not None})
+
 @app.route("/chat", methods=["POST"])
 def chat_endpoint():
     data = request.get_json()
@@ -58,6 +62,7 @@ def chat_endpoint():
         return jsonify({"error": "Message is required"}), 400
     
     user_query = data["message"]
+    print(f"Received query: {user_query}")
     
     if not rag:
          return jsonify({"response": "System is initializing or in error state. Please check server logs."}), 500
@@ -73,6 +78,10 @@ def chat_endpoint():
     prompt = f"{SYSTEM_PROMPT}\n\nCONTEXT:\n{context}\n\nUSER QUESTION:\n{user_query}\n\nANSWER:"
     
     # 3. Call Mistral API
+    if not MISTRAL_API_KEY:
+        print("CRITICAL: MISTRAL_API_KEY is not set.")
+        return jsonify({"response": "API Key missing. Please set MISTRAL_API_KEY environment variable."})
+
     try:
         headers = {
             "Authorization": f"Bearer {MISTRAL_API_KEY}",
@@ -80,7 +89,7 @@ def chat_endpoint():
         }
         
         payload = {
-            "model": "mistral-tiny", # or mistral-small, mistral-medium
+            "model": MISTRAL_MODEL,
             "messages": [
                 {"role": "user", "content": prompt}
             ],
@@ -88,7 +97,9 @@ def chat_endpoint():
         }
         
         response = requests.post("https://api.mistral.ai/v1/chat/completions", json=payload, headers=headers)
-        response.raise_for_status()
+        if response.status_code != 200:
+            print(f"Mistral API Error: {response.status_code} - {response.text}")
+            response.raise_for_status()
         
         result = response.json()
         ai_response = result['choices'][0]['message']['content']
@@ -100,4 +111,6 @@ def chat_endpoint():
         return jsonify({"response": "I'm having trouble connecting to my brain right now. Please try again later."})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    # Use PORT environment variable if available (for deployment)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False) # Turned off debug for cleaner output
