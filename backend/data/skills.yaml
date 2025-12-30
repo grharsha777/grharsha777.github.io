@@ -1,0 +1,26 @@
+languages:
+  - Python
+  - JavaScript
+  - HTML/CSS
+  - SQL
+frameworks:
+  - FastAPI
+  - React
+  - LangChain
+  - AutoGen
+  - Flask
+  - TensorFlow/PyTorch (Basic)
+tools:
+  - Docker
+  - Kubernetes
+  - Git & GitHub
+  - GitHub Actions
+  - ChromaDB
+  - FAISS
+concepts:
+  - Agentic AI
+  - RAG (Retrieval-Augmented Generation)
+  - Microservices Architecture
+  - DevOps Automation
+  - CI/CD
+  - ReAct Loops

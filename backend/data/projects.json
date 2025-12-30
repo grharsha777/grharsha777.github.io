@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Gemini DevOps Copilot",
+        "description": "An AI assistant that automates K8s configuration generation and incident response using the Gemini API. Reduces manual toil for DevOps teams by 80%.",
+        "tech_stack": ["FastAPI", "Docker", "Gemini API", "Kubernetes"],
+        "links": {"repo": "https://github.com/grharsha777/Gemini-DevOps-Copilot"}
+    },
+    {
+        "name": "Mentara AI",
+        "description": "A mental wellness platform combining full-stack development with LLMs to provide supportive, empathetic conversations. Addresses the high cost of mental health access.",
+        "tech_stack": ["React", "LLM", "FullStack"],
+        "links": {"repo": "https://github.com/grharsha777/MentaraAI"}
+    },
+    {
+        "name": "Code Vortex",
+        "description": "A suite of developer tools designed to automate documentation and code review processes. Keeps documentation in sync with code changes via Git hooks.",
+        "tech_stack": ["DevTools", "Automation", "AI"],
+        "links": {"repo": "https://github.com/grharsha777/Code-Vortex"}
+    },
+    {
+        "name": "Client-Side Netflix Clone",
+        "description": "A pixel-perfect React UI clone of Netflix with a Firebase backend. Features a custom video player and dynamic content loading.",
+        "tech_stack": ["React", "Firebase", "UI/UX"],
+        "links": {"repo": "https://github.com/grharsha777/Netflix-Clone"}
+    },
+    {
+        "name": "Object Tracking System",
+        "description": "Real-time object detection and tracking system using YOLO and OpenCV.",
+        "tech_stack": ["Python", "OpenCV", "ComputerVision"],
+        "links": {"repo": "https://github.com/grharsha777"}
+    },
+    {
+        "name": "Fitness Tracker",
+        "description": "Activity analytics dashboard for tracking fitness goals and progress.",
+        "tech_stack": ["JavaScript", "Analytics"],
+        "links": {"repo": "https://github.com/grharsha777"}
+    }
+]

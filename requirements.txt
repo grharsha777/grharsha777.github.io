@@ -1,0 +1,12 @@
+openai
+sentence-transformers
+chromadb
+transformers
+torch
+fastapi
+uvicorn
+pyyaml
+python-multipart
+python-dotenv
+mistralai
+requests

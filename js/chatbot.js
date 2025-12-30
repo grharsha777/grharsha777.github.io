@@ -59,25 +59,29 @@ const renderSuggestions = () => {
     chatInputArea.parentNode.insertBefore(suggestionsContainer, chatInputArea);
 }
 
-const generateResponse = (userMsg) => {
-    // Simple Keyword Matching Logic (Agentic Light)
-    const lowerMsg = userMsg.toLowerCase();
-    let response = knowledgeBase["default"];
+const generateResponse = async (userMsg) => {
+    try {
+        const response = await fetch("http://localhost:8000/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userMsg })
+        });
 
-    if (lowerMsg.includes("project") || lowerMsg.includes("work") || lowerMsg.includes("portfolio")) response = knowledgeBase["projects"];
-    else if (lowerMsg.includes("about") || lowerMsg.includes("who are you") || lowerMsg.includes("bio")) response = knowledgeBase["about"];
-    else if (lowerMsg.includes("contact") || lowerMsg.includes("email") || lowerMsg.includes("hire") || lowerMsg.includes("reach")) response = knowledgeBase["contact"];
-    else if (lowerMsg.includes("skill") || lowerMsg.includes("stack") || lowerMsg.includes("tech") || lowerMsg.includes("language")) response = knowledgeBase["skills"];
-    else if (lowerMsg.includes("gemini")) response = knowledgeBase["gemini"];
-    else if (lowerMsg.includes("mentara")) response = knowledgeBase["mentara"];
-    else if (lowerMsg.includes("code vortex")) response = knowledgeBase["code vortex"];
-    else if (lowerMsg.includes("experience") || lowerMsg.includes("education") || lowerMsg.includes("resume") || lowerMsg.includes("résumé")) response = knowledgeBase["experience"];
-    else if (lowerMsg.includes("agent") || lowerMsg.includes("agentic")) response = knowledgeBase["agentic"];
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
 
-    return response;
+        const data = await response.json();
+        return data.response;
+    } catch (error) {
+        console.error("Error connecting to Chatbot API:", error);
+        return "I'm having trouble connecting to my brain (Backend Server). Please ensure the Python server is running at http://localhost:8000.";
+    }
 }
 
-const handleChat = () => {
+const handleChat = async () => {
     userMessage = chatInput.value.trim();
     if (!userMessage) return;
 
@@ -86,19 +90,20 @@ const handleChat = () => {
     chatbox.appendChild(createChatLi(userMessage, "outgoing"));
     chatbox.scrollTo(0, chatbox.scrollHeight);
 
-    setTimeout(() => {
-        const incomingChatLi = createChatLi("Thinking...", "incoming");
-        chatbox.appendChild(incomingChatLi);
-        chatbox.scrollTo(0, chatbox.scrollHeight);
+    // Show waiting animation
+    const incomingChatLi = createChatLi("Thinking...", "incoming");
+    chatbox.appendChild(incomingChatLi);
+    chatbox.scrollTo(0, chatbox.scrollHeight);
 
-        setTimeout(() => {
-            const responseText = generateResponse(userMessage);
-            const messageElement = incomingChatLi.querySelector("p");
-            messageElement.innerHTML = responseText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            chatbox.scrollTo(0, chatbox.scrollHeight);
-        }, 600);
-
-    }, 600);
+    try {
+        const responseText = await generateResponse(userMessage);
+        const messageElement = incomingChatLi.querySelector("p");
+        // Simple markdown parsing for bold
+        messageElement.innerHTML = responseText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    } catch (err) {
+        incomingChatLi.querySelector("p").textContent = "Sorry, something went wrong.";
+    }
+    chatbox.scrollTo(0, chatbox.scrollHeight);
 }
 
 // Initialize
